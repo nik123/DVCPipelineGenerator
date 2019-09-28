@@ -5,39 +5,37 @@ import hashlib
 from typing import Iterable
 
 
-def hash_bytestr_iter(bytesiter, hasher, ashexstr=False):
-    for block in bytesiter:
-        hasher.update(block)
-    return hasher.hexdigest() if ashexstr else hasher.digest()
+def generate_stage(stage, out_dir):
+    stage_path = os.path.join(out_dir, stage["name"] + ".dvc")
+    cmd = stage["cmd"]
+    dvc_cmd = "dvc run -f " + stage_path
 
+    def generate_params(param, param_type):
+        if "cached" in param and param["cached"] == False:
+            param_type = param_type.upper()
 
-def file_as_blockiter(path, blocksize=65536):
-    with open(path, 'rb') as f:
-        block = f.read(blocksize)
-        while len(block) > 0:
-            yield block
-            block = f.read(blocksize)
+        dvc_param = " " + param_type + " " + param["path"]
+        if "arg" in param:
+            cmd_param = " " + param["arg"] + " " + param["path"]
 
+        return (dvc_param, cmd_param)
+    
+    for dep in stage["deps"]:
+        params = generate_params(dep, "-d")
+        dvc_cmd += params[0]
+        cmd += params[1]
 
-def generate_hash(paths: Iterable, hasher=None):
-    if hasher is None:
-        hasher = hashlib.sha256()
+    for out in stage["outs"]:
+        params = generate_params(out, "-o")
+        dvc_cmd += params[0]
+        cmd += params[1]
 
-    def update_hasher(path, hasher):
-        if os.path.isdir(path):
-            paths = [f.path for f in os.scandir(path)]
-            paths = sorted(paths)
-            for p in paths:
-                update_hasher(p, hasher)
+    for metric in stage["metrics"]:
+        params = generate_params(metric, '-m')
+        dvc_cmd += params[0]
+        cmd += params[1]
 
-        hash_bytestr_iter(file_as_blockiter(path), hasher)
-
-    for p in paths:
-        if not os.path.exists(p):
-            raise ValueError("File doesn't exist at path: " + v)
-        update_hasher(p, hasher)
-
-    return hasher.hexdigest()
+    return dvc_cmd + " " + cmd 
 
 
 def main():
@@ -60,17 +58,9 @@ def main():
     with open(config_path, 'r') as f:
         pipeline_config = json.load(f)
 
-    for name, stage in pipeline_config.items():
-        out_path = os.path.join(out_dir, name + ".json")
-        if 'paths' in stage:
-            paths = sorted(stage['paths'].values())
-            paths_hash = generate_hash(paths)
-            stage['paths_hash'] = paths_hash
-
-        with open(out_path, 'w') as f:
-            json.dump(stage, f, ensure_ascii=False, indent=4)
-            # Add newline character for better integration with Unix tools:
-            print(end="\n", file=f)
+    for stage in pipeline_config["stages"]:
+        res = generate_stage(stage, out_dir)
+        print(res)
 
 
 if __name__ == '__main__':
