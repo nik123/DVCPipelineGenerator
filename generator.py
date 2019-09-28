@@ -5,7 +5,7 @@ import hashlib
 from typing import Iterable
 
 
-def generate_stage(stage, out_dir):
+def dvc_command(stage, out_dir):
     stage_path = os.path.join(out_dir, stage["name"] + ".dvc")
     cmd = stage["cmd"]
     dvc_cmd = "dvc run -f " + stage_path
@@ -19,7 +19,7 @@ def generate_stage(stage, out_dir):
             cmd_param = " " + param["arg"] + " " + param["path"]
 
         return (dvc_param, cmd_param)
-    
+
     for dep in stage["deps"]:
         params = generate_params(dep, "-d")
         dvc_cmd += params[0]
@@ -35,7 +35,7 @@ def generate_stage(stage, out_dir):
         dvc_cmd += params[0]
         cmd += params[1]
 
-    return dvc_cmd + " " + cmd 
+    return dvc_cmd + " " + cmd
 
 
 def main():
@@ -59,8 +59,8 @@ def main():
         pipeline_config = json.load(f)
 
     for stage in pipeline_config["stages"]:
-        res = generate_stage(stage, out_dir)
-        print(res)
+        dvc_cmd = dvc_command(stage, out_dir)
+        print(dvc_cmd)
 
 
 if __name__ == '__main__':
