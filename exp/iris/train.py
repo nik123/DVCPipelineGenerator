@@ -21,10 +21,10 @@ def main():
     checkpoint = args.checkpoint
     metrics = args.metrics
 
+    # No real training. Just simulate training process:
     with open(metrics, 'w') as f:
         print("Test acc.: 100%\n Test loss: 0.0",
               file=f)
-
     with open(checkpoint, 'w') as f:
         print("1", file=f)
 

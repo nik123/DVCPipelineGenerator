@@ -2,6 +2,7 @@ import argparse
 import os
 import json
 import hashlib
+import yaml
 from typing import Iterable
 
 
@@ -42,21 +43,21 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--config_path',
-        help='Path to configuration json',
+        help='Path to configuration file for pipeline',
         required=True)
     parser.add_argument(
         '--out_dir',
         help='Path to output dir. '
-             'If "None" then result is saved in current working directory')
+             'If "None" then result is saved in same dir with config')
 
     args = parser.parse_args()
     config_path = args.config_path
     out_dir = args.out_dir
     if out_dir is None:
-        out_dir = os.getcwd()
+        out_dir = os.path.split(args.config_path)[0]
 
     with open(config_path, 'r') as f:
-        pipeline_config = json.load(f)
+        pipeline_config = yaml.safe_load(f)
 
     for stage in pipeline_config["stages"]:
         dvc_cmd = dvc_command(stage, out_dir)
