@@ -1,0 +1,27 @@
+{
+    "stages": [
+	{
+	    "name": "train",
+	    "cmd": "python -m exp.iris.train",
+	    "deps": [
+		{
+		    "path": "data/raw/iris.data",
+		    "arg": "--dataset"
+		}
+	    ],
+	    "outs": [
+		{
+		    "path": "data/exp/iris/checkpoint.txt",
+		    "arg": "--checkponit"
+		}
+	    ],
+	    "metrics": [
+		{
+		    "path": "data/exp/iris/metrics.txt",
+		    "arg": "--metrics",
+		    "cached": false 
+		}
+	    ]
+	}
+    ]
+}
