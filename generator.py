@@ -21,20 +21,23 @@ def dvc_command(stage, out_dir):
 
         return (dvc_param, cmd_param)
 
-    for dep in stage["deps"]:
-        params = generate_params(dep, "-d")
-        dvc_cmd += params[0]
-        cmd += params[1]
+    if "deps" in stage:
+        for dep in stage["deps"]:
+            params = generate_params(dep, "-d")
+            dvc_cmd += params[0]
+            cmd += params[1]
 
-    for out in stage["outs"]:
-        params = generate_params(out, "-o")
-        dvc_cmd += params[0]
-        cmd += params[1]
+    if "outs" in stage:
+        for out in stage["outs"]:
+            params = generate_params(out, "-o")
+            dvc_cmd += params[0]
+            cmd += params[1]
 
-    for metric in stage["metrics"]:
-        params = generate_params(metric, '-m')
-        dvc_cmd += params[0]
-        cmd += params[1]
+    if "metrics" in stage:
+        for metric in stage["metrics"]:
+            params = generate_params(metric, '-m')
+            dvc_cmd += params[0]
+            cmd += params[1]
 
     full_cmd = dvc_cmd + " " + cmd
 

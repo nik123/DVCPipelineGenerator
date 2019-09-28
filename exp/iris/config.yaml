@@ -1,13 +1,22 @@
 ---
 stages:
-- name: train
-  cmd: python -m exp.iris.train
+- name: prepare 
+  cmd: python -m exp.iris.prepare
   deps:
   - path: data/raw/iris.data
     arg: "--dataset"
   outs:
+  - path: data/exp/iris/prepared.data
+    arg: "--prepared"
+
+- name: train
+  cmd: python -m exp.iris.train
+  deps:
+  - path: data/exp/iris/prepared.data
+    arg: "--data"
+  outs:
   - path: data/exp/iris/checkpoint.txt
-    arg: "--checkponit"
+    arg: "--checkpoint"
   metrics:
   - path: data/exp/iris/metrics.txt
     arg: "--metrics"

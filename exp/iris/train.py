@@ -2,9 +2,9 @@ import argparse
 
 
 def main():
-    argparse = parser.ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--dataset',
+        '--data',
         required=True,
         help="Path to file with iris data")
     parser.add_argument(
@@ -17,7 +17,7 @@ def main():
         help="Path to store trained model metrics")
     args = parser.parse_args()
 
-    dataset = args.dataset
+    data = args.data
     checkpoint = args.checkpoint
     metrics = args.metrics
 
