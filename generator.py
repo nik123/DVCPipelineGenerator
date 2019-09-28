@@ -36,7 +36,15 @@ def dvc_command(stage, out_dir):
         dvc_cmd += params[0]
         cmd += params[1]
 
-    return dvc_cmd + " " + cmd
+    full_cmd = dvc_cmd + " " + cmd
+
+    if os.path.exists(stage_path):
+        with open(stage_path, 'r') as f:
+            d = yaml.safe_load(f)
+            if d["cmd"] == cmd:
+                full_cmd = "dvc repro " + stage_path
+
+    return full_cmd
 
 
 def main():
