@@ -15,11 +15,13 @@ def main():
         '--metrics',
         required=True,
         help="Path to store trained model metrics")
+    parser.add_argument('--epochs', required=True)
     args = parser.parse_args()
 
     data = args.data
     checkpoint = args.checkpoint
     metrics = args.metrics
+    epochs = args.epochs
 
     # No real training. Just simulate training process:
     with open(metrics, 'w') as f:

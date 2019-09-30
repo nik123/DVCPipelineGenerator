@@ -47,6 +47,10 @@ def dvc_command(stage, out_dir):
             dvc_cmd += params[0]
             cmd += params[1]
 
+    if "args" in stage:
+        for arg in stage["args"]:
+            cmd += " " + arg
+
     full_cmd = dvc_cmd + " " + cmd
 
     if os.path.exists(stage_path):

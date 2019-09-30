@@ -1,6 +1,6 @@
 ---
 stages:
-- name: prepare 
+- name: prepare
   cmd: python -m exp.iris.prepare
   deps:
     # either str either list of strings
@@ -24,4 +24,7 @@ stages:
   - paths: data/exp/iris/metrics.txt
     arg: "--metrics"
     cached: false
+  # Any args passed to the script which are not deps, outs or metrics
+  args:
+    - "--epochs 100"
 
