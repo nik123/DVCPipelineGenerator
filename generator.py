@@ -4,6 +4,7 @@ import json
 import hashlib
 import yaml
 from typing import Iterable
+from functools import reduce
 
 
 def dvc_command(stage, out_dir):
@@ -14,10 +15,17 @@ def dvc_command(stage, out_dir):
     def generate_params(param, param_type):
         if "cached" in param and param["cached"] == False:
             param_type = param_type.upper()
+        paths = param["paths"]
+        if isinstance(paths, str):
+            paths = [paths]
 
-        dvc_param = " " + param_type + " " + param["path"]
+        dvc_param = ""
+        for p in paths:
+            dvc_param += " " + param_type + " " + p
         if "arg" in param:
-            cmd_param = " " + param["arg"] + " " + param["path"]
+            cmd_param = reduce(
+                lambda x, y: x + " " + y,
+                [" " + param["arg"], *paths])
 
         return (dvc_param, cmd_param)
 

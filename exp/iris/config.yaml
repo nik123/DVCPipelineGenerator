@@ -3,22 +3,25 @@ stages:
 - name: prepare 
   cmd: python -m exp.iris.prepare
   deps:
-  - path: data/raw/iris.data
+    # either str either list of strings
+    # "paths" because in some cases single arg may take
+    # several values. For example "--dataset data1 data2 data3"
+  - paths: data/raw/iris.data
     arg: "--dataset"
   outs:
-  - path: data/exp/iris/prepared.data
+  - paths: data/exp/iris/prepared.data
     arg: "--prepared"
 
 - name: train
   cmd: python -m exp.iris.train
   deps:
-  - path: data/exp/iris/prepared.data
+  - paths: data/exp/iris/prepared.data
     arg: "--data"
   outs:
-  - path: data/exp/iris/checkpoint.txt
+  - paths: data/exp/iris/checkpoint.txt
     arg: "--checkpoint"
   metrics:
-  - path: data/exp/iris/metrics.txt
+  - paths: data/exp/iris/metrics.txt
     arg: "--metrics"
     cached: false
 
