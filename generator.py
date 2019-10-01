@@ -26,6 +26,8 @@ def dvc_command(stage, out_dir):
             cmd_param = reduce(
                 lambda x, y: x + " " + y,
                 [" " + param["arg"], *paths])
+        else:
+            cmd_param = ""
 
         return (dvc_param, cmd_param)
 
